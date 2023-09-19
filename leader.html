@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2090 INNOVATE-2-SUSTAIN</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c58383;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ead7be;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            color: #333;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .association-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .association-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .association-logos img {
+            max-width: 120px;
+            height: auto;
+            margin: 0 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn {
+            border: 2px solid gray;
+            color: gray;
+            background-color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>2090 INNOVATE-2-SUSTAIN</h1>
+        </div>
+        <div class="logo">
+            <img src="pes.png" alt="Your Logo">
+            <img src="mom.jpeg" alt="Your Logo">
+        </div>
+        <div class="association-section">
+            <p><strong>IN ASSOCIATION WITH</strong></p>
+            <div class="association-logos">
+                <img src="kar_main_logo.png" alt="Association Logo 1">
+                <img src="best.png" alt="Association Logo 2">
+                <img src="giz-logo.gif" alt="Association Logo 3">
+                <img src="kok.jpeg" alt="Association Logo 4">
+                <img src="lok.png" alt="Association Logo 5">
+            </div>
+        </div>
+        <div class="upload-btn-wrapper">
+            <button class="btn">Admin access</button>
+            <input type="file" name="myfile" accept=".xlsx, .xls" id="fileInput">
+        </div>
+        <table id="leaderboard">
+            <!-- Leaderboard data will be inserted here using JavaScript -->
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <script>
+        // Function to handle file selection
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            var file = event.target.files[0];
+
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var data = new Uint8Array(e.target.result);
+                    var workbook = XLSX.read(data, { type: 'array' });
+
+                    // Assuming the first sheet contains leaderboard data
+                    var sheetName = workbook.SheetNames[0];
+                    var sheet = workbook.Sheets[sheetName];
+
+                    // Convert the sheet to an array of objects
+                    var leaderboardData = XLSX.utils.sheet_to_json(sheet);
+
+                    // Call the function to populate the leaderboard with data
+                    populateLeaderboard(leaderboardData);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        // Function to populate the leaderboard table
+        function populateLeaderboard(data) {
+            var leaderboard = document.getElementById('leaderboard');
+            leaderboard.innerHTML = ''; // Clear existing rows
+
+            // Add table headers
+            var headerRow = document.createElement('tr');
+            Object.keys(data[0]).forEach(function (key) {
+                var th = document.createElement('th');
+                th.textContent = key;
+                headerRow.appendChild(th);
+            });
+            leaderboard.appendChild(headerRow);
+
+            // Add table data
+            data.forEach(function (item) {
+                var row = document.createElement('tr');
+                Object.values(item).forEach(function (value) {
+                    var td = document.createElement('td');
+                    td.textContent = value;
+                    row.appendChild(td);
+                });
+                leaderboard.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
