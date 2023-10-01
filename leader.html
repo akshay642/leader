@@ -127,6 +127,7 @@
         <table id="leaderboard">
             <!-- Leaderboard data will be inserted here using JavaScript -->
         </table>
+        <button id="downloadBtn" class="btn">Access Tech-Team</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
@@ -148,12 +149,15 @@
                     // Convert the sheet to an array of objects
                     var leaderboardData = XLSX.utils.sheet_to_json(sheet);
 
-                    // Sort the leaderboard data in descending order based on total marks
+                    // Sort the data in descending order based on total marks
                     leaderboardData.sort(function (a, b) {
                         return b['Total Marks'] - a['Total Marks'];
                     });
 
-                    // Call the function to populate the leaderboard with sorted data
+                    // Store the current leaderboard data
+                    currentLeaderboardData = leaderboardData;
+
+                    // Call the function to populate the leaderboard with data
                     populateLeaderboard(leaderboardData);
                 };
                 reader.readAsArrayBuffer(file);
@@ -185,6 +189,41 @@
                 leaderboard.appendChild(row);
             });
         }
+
+        // Function to export leaderboard data as an Excel file
+        function exportLeaderboard() {
+            var leaderboardData = JSON.parse(JSON.stringify(currentLeaderboardData)); // Copy the data
+
+            // Convert data to an array of arrays (for XLSX)
+            var exportData = [];
+            exportData.push(Object.keys(leaderboardData[0])); // Headers
+
+            leaderboardData.forEach(function (item) {
+                var row = [];
+                Object.values(item).forEach(function (value) {
+                    row.push(value);
+                });
+                exportData.push(row);
+            });
+
+            // Create a new workbook
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet(exportData);
+            XLSX.utils.book_append_sheet(wb, ws, 'Leaderboard');
+
+            // Save the workbook as a file
+            var filename = 'leaderboard.xlsx';
+            XLSX.writeFile(wb, filename);
+        }
+
+        // Add click event listener to the "Download Leaderboard" button
+        document.getElementById('downloadBtn').addEventListener('click', function () {
+            exportLeaderboard();
+        });
+
+        // Variable to store the current leaderboard data
+        var currentLeaderboardData = [];
     </script>
 </body>
 </html>
+
