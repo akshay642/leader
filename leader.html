@@ -148,7 +148,12 @@
                     // Convert the sheet to an array of objects
                     var leaderboardData = XLSX.utils.sheet_to_json(sheet);
 
-                    // Call the function to populate the leaderboard with data
+                    // Sort the leaderboard data in descending order based on total marks
+                    leaderboardData.sort(function (a, b) {
+                        return b['Total Marks'] - a['Total Marks'];
+                    });
+
+                    // Call the function to populate the leaderboard with sorted data
                     populateLeaderboard(leaderboardData);
                 };
                 reader.readAsArrayBuffer(file);
